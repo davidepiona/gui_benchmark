@@ -4,8 +4,7 @@ import _ from 'lodash';
 const defaultState = {
     isFetching: false,
     list: [],
-    error: null,
-    open: false
+    error: null
 };
 
 export default function movies(state = defaultState, action) {
@@ -39,7 +38,6 @@ export default function movies(state = defaultState, action) {
             return {
                 ...state,
                 isFetching: false,
-                open: true
                 
             }
         case ActionTypes.UPLOAD_MOVIE_FAILURE:
@@ -59,7 +57,7 @@ export default function movies(state = defaultState, action) {
                 ...state,
                 isFetching: false,
                 list: [action.data, ...state.list],
-                open: false
+                
                 
             }
         case ActionTypes.POST_MOVIE_FAILURE:
@@ -67,7 +65,7 @@ export default function movies(state = defaultState, action) {
                 ...state,
                 isFetching: false,
                 error: action.error,
-                open: false
+                
             }
         default:
                 return state

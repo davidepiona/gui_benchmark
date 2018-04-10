@@ -5,7 +5,7 @@ import * as ActionTypes from '../actions'
 
 const mapStateToProps = (state) => {
     return {
-        open: state.movies.open
+        
     }
   }
 
@@ -14,7 +14,11 @@ const mapDispatchToProps = (dispatch) => {
         
         onPostMovieRequest: () => dispatch(ActionTypes.postMovieRequest()),
         onPostMovieSuccess: (data) => dispatch(ActionTypes.postMovieSuccess(data)),
-        onPostMovieFailure: (error) => dispatch(ActionTypes.postMovieFailure(error))
+        onPostMovieFailure: (error) => dispatch(ActionTypes.postMovieFailure(error)),
+
+        onUploadMovieRequest: () => dispatch(ActionTypes.uploadMovieRequest()),
+        onUploadMovieSuccess: (data) => dispatch(ActionTypes.uploadMovieSuccess(data)),
+        onUploadMovieFailure: (error) => dispatch(ActionTypes.uploadMovieFailure(error))
     };
 }
 

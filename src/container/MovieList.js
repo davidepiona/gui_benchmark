@@ -4,8 +4,7 @@ import * as ActionTypes from '../actions'
 
 const mapStateToProps = (state) => {
     return {
-        movies: state.movies.list,
-        open: state.movies.open
+        movies: state.movies.list
     }
 }
 

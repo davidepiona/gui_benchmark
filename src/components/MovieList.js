@@ -2,17 +2,18 @@ import React from 'react';
 import { List, ListItem } from 'material-ui/List';
 import _ from 'lodash'
 
-import MobileTearSheet from './MobileTearSheet';
+
 import ActionInfo from 'material-ui/svg-icons/action/info';
 import Divider from 'material-ui/Divider';
 import Subheader from 'material-ui/Subheader';
 import Avatar from 'material-ui/Avatar';
 import FileFolder from 'material-ui/svg-icons/file/folder';
 import Movie from 'material-ui/svg-icons/av/movie';
-import { blue500, yellow600 } from 'material-ui/styles/colors';
+import { blue500, grey400} from 'material-ui/styles/colors';
 import EditorInsertChart from 'material-ui/svg-icons/editor/insert-chart';
 import Paper from 'material-ui/Paper';
 import { getMovies } from '../Api'
+import { black } from 'material-ui/styles/colors';
 
 
 class MovieList extends React.Component {
@@ -37,6 +38,23 @@ class MovieList extends React.Component {
     return (
       <Paper style={list_container} zDepth={3}>
       {/* <button className="MyButton" onClick={(e) => this.handleClick()}> {"Click me"} </button> */}
+        
+        <List>
+          <Subheader inset={true}>Movies</Subheader>
+          {
+            _.map(movies, (movie) =>
+              <ListItem
+                leftAvatar={<Avatar icon={<Movie />} backgroundColor={movie.pending===true? grey400 : blue500} />}
+                rightIcon={<ActionInfo />}
+                primaryText={movie.title}
+                key={movie.movieId}
+                secondaryText={movie.releaseDate}
+                disabled={movie.pending}
+                style={{color: movie.pending===true? grey400 : black}}
+              />)
+          }
+        </List>
+        <Divider inset={true} />
         <List>
           <Subheader inset={true}>Folders</Subheader>
           <ListItem
@@ -45,24 +63,11 @@ class MovieList extends React.Component {
             primaryText="Drama films"
           />
           <ListItem
-            leftAvatar={<Avatar icon={<FileFolder />} />}
+            leftAvatar={<Avatar icon={<FileFolder />}/>}
             rightIcon={<ActionInfo />}
             primaryText="Action films"
+            
           />
-        </List>
-        <Divider inset={true} />
-        <List>
-          <Subheader inset={true}>Movies</Subheader>
-          {
-            _.map(movies, (movie) =>
-              <ListItem
-                leftAvatar={<Avatar icon={<Movie />} backgroundColor={blue500} />}
-                rightIcon={<ActionInfo />}
-                primaryText={movie.title}
-                key={movie.movieId}
-                secondaryText={movie.releaseDate}
-              />)
-          }
         </List>
       </Paper>
     )

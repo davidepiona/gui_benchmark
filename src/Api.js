@@ -1,9 +1,9 @@
 const path = '/'
 
-export const getMovies = () => fetch(`http://localhost:9999/api/movies`)
+export const getMovies = () => fetch(`http://localhost:8010/api/movies`)
     .then(response => response.json());
 
-export const uploadMovie = (movie) => fetch('http://localhost:8020/api/upload', {
+export const uploadMovie = (id, movie) => fetch(`http://localhost:8020/api/upload/${id}`, {
   method: 'POST',
   body: movie
 })
