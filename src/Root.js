@@ -23,11 +23,14 @@ import { Provider } from 'react-redux';
 // }
 const Root = () => (
   <Provider store={ createStore() }>
-  
+
     <BrowserRouter> 
     <React.Fragment>
         <DevTools/>
-        <Route path="/" component={ Main_Page } />
+        <MuiThemeProvider>
+          <Route path="/" component={ Main_Page } />
+        </MuiThemeProvider>
+        
       </React.Fragment>
     </BrowserRouter>
   </Provider>
