@@ -79,10 +79,10 @@ export const postMovieFailure = (error) => {
 export const STREAM_MOVIE_REQUEST = 'STREAM_MOVIE_REQUEST'
 export const CLOSE_STREAM = 'CLOSE_STREAM'
 
-export const streamMovieRequest = (streamId) => {
+export const streamMovieRequest = (streamMovie) => {
     return {
         type: STREAM_MOVIE_REQUEST,
-        streamId
+        streamMovie
     };
 }
 
@@ -135,5 +135,16 @@ export const openUpload = (movieId) => {
 export const closeUpload = () => {
     return {
         type: CLOSE_UPLOAD
+    };
+}
+
+// ----------------------------------------------------------------------------
+
+export const SEARCH_CHANGE = 'SEARCH_CHANGE'
+
+export const searchChange = (search) => {
+    return {
+        type: SEARCH_CHANGE,
+        search
     };
 }

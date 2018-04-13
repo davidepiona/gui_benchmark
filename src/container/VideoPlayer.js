@@ -5,7 +5,7 @@ import * as ActionTypes from '../actions'
 
 const mapStateToProps = (state) => {
     return {
-        streamId: state.movies.streamId,
+        streamMovie: state.movies.streamMovie,
         openStream: state.movies.openStream
     }
   }

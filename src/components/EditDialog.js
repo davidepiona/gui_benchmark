@@ -2,12 +2,10 @@ import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import DatePicker from 'material-ui/DatePicker';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import ContentAdd from 'material-ui/svg-icons/content/add';
-import { darkBlack } from 'material-ui/styles/colors';
+import TextField from 'material-ui/TextField';
+import { blue500, white, red400 } from 'material-ui/styles/colors';
 
-import moment from 'moment'
-import {editMovie} from '../Api'
+import {editMovie, getMovies} from '../Api'
 
 
 
@@ -17,7 +15,6 @@ import {editMovie} from '../Api'
 export default class EditDialog extends React.Component {
 
   componentWillMount() {
-    console.log(this.props.editMovie)
     const date = new Date();
     this.setState({title:"", director:"", releaseDate:date, language:"", duration:"", open:false});
   }
@@ -54,11 +51,22 @@ export default class EditDialog extends React.Component {
         .then(
             data => {
                 this.props.onEditMovieEnd()
+                this.refresh()
             },
             error => this.props.onEditMovieFailure(error)
         )
-    this.setState({open: false})
-    this.setState({open2: true})
+    this.setState({open: false})   
+  }
+
+  refresh() {
+    this.props.onGetMoviesRequest();
+      getMovies()
+        .then(
+          movie => {
+            this.props.onGetMoviesSuccess(movie)
+          },
+          error => this.props.onGetMoviesFailure(error)
+        )
   }
 
   updateState() {
@@ -69,6 +77,7 @@ export default class EditDialog extends React.Component {
   }
 
   render() {
+    const {editMovie} = this.props
     const{openEdit} = this.props
     return (
       <div>
@@ -77,32 +86,57 @@ export default class EditDialog extends React.Component {
           open={openEdit} 
           onRequestClose={(e) => this.closeRequestEdit()}
           actions= {
-            <FloatingActionButton
+            [<FlatButton
+            label="Cancel"
+            disabled={false}
+            onClick={(e) => this.closeRequestEdit()}
+            backgroundColor= {red400}
+            style={{color: white}}> 
+            </FlatButton>,
+            <FlatButton
             label="Edit"
             disabled={false}
-            onClick={(e) => this.updateState()}>
-            <ContentAdd />
-          </FloatingActionButton> 
+            onClick={(e) => this.updateState()}
+            backgroundColor= {blue500}
+            style={{color: white, marginLeft: 5}}> 
+            </FlatButton>] 
+            
           }>
+          Title: {editMovie.title} <br/>
+          Director: {editMovie.director} <br/>
+          Language: {editMovie.language} <br/>
         </Dialog>
        
         <Dialog
           title="Movie-Edit"
           open={this.state.open}
           onRequestClose={(e) => this.closeRequestSubmit()}
+          titleStyle={{paddingTop: 18, paddingBottom: 0}}
+          bodyStyle={{overflowY: 'auto'}}
+          actionsContainerStyle={{paddingTop: 0, paddingBottom: 5}}
           actions= {
-            <FloatingActionButton
+            [<FlatButton
+            label="Cancel"
+            disabled={false}
+            onClick={(e) => this.closeRequestSubmit()}
+            backgroundColor= {red400}
+            style={{color: white}}> 
+            </FlatButton>,
+            <FlatButton
             label="Submit"
             disabled={false}
-            onClick={(e) => this.closeDialog()}>
-            <ContentAdd />
-            </FloatingActionButton>
+            onClick={(e) => this.closeDialog()}
+            backgroundColor= {blue500}
+            style={{color: white, marginLeft: 5}}> 
+            </FlatButton>]
           }>
-          <input placeholder={this.state.title} value={this.state.title} onChange={ (e) => this.inputValueChanged("title",e) }/>
-          <input placeholder="Director" value={this.state.director} onChange={ (e) => this.inputValueChanged("director",e) } />
-          <input placeholder="Language" value={this.state.language} onChange={ (e) => this.inputValueChanged("language", e) } />
-          <input placeholder="Duration" value={this.state.duration} onChange={ (e) => this.inputValueChanged("duration", e) } />       
-          <DatePicker id="datePicker" defaultDate={new Date(this.state.releaseDate)} openToYearSelection={true} onChange={(x, event) =>this.dateChange(event)}/>
+          <TextField style={{height:66}} floatingLabelText="Title" value={this.state.title} onChange={ (e) => this.inputValueChanged("title",e) }/> 
+          <br/>
+          <TextField style={{height:66}} floatingLabelText="Director" value={this.state.director} onChange={ (e) => this.inputValueChanged("director",e) }/>
+          <br/>
+          <TextField style={{height:66}} floatingLabelText="Language" value={this.state.language} onChange={ (e) => this.inputValueChanged("language",e) }/> 
+          <br/>                 
+          <DatePicker style={{height:66}} floatingLabelText="Release date" id="datePicker" defaultDate={new Date(this.state.releaseDate)} openToYearSelection={true} onChange={(x, event) =>this.dateChange(event)}/>
           
         </Dialog>
       </div>
@@ -111,11 +145,6 @@ export default class EditDialog extends React.Component {
 }
 
 
-const style = {
-  marginLeft: 200,
-  marginRight: 24,
-
-};
 
 const movieInfo = {
   "id":"",

@@ -11,7 +11,6 @@ import Avatar from 'material-ui/Avatar';
 import FileFolder from 'material-ui/svg-icons/file/folder';
 import Movie from 'material-ui/svg-icons/av/movie';
 import { blue500, grey400} from 'material-ui/styles/colors';
-import Paper from 'material-ui/Paper';
 import { List, ListItem } from 'material-ui/List';
 import { black } from 'material-ui/styles/colors';
 
@@ -31,7 +30,8 @@ class MovieList extends React.Component {
 
   streamMovie(streamId) {
     console.log(streamId)
-    this.props.onStreamMovieRequest(streamId);
+    getSingleMovie(streamId)
+      .then(streamMovie => this.props.onStreamMovieRequest(streamMovie));
 
   }
   
@@ -46,14 +46,17 @@ class MovieList extends React.Component {
 
   render() {
     const { movies } = this.props
+    const { search } = this.props
     return (
-      <Paper style={list_container} zDepth={3}>
+      <div style={{paddingTop: '64px'}}>
       {/* <button className="MyButton" onClick={(e) => this.handleClick()}> {"Click me"} </button> */}
         
         <List>
           <Subheader inset={true}>Movies</Subheader>
           {
-            _.map(movies, (movie) =>
+            _.map(
+              _.filter(movies, (mov) => search!==""? _.includes(mov.title, search) : true)
+              , (movie) =>
               <ListItem
                 leftAvatar={
                     <Avatar 
@@ -63,12 +66,11 @@ class MovieList extends React.Component {
                 rightIcon={
                     <ActionInfo
                       onClick={(e)=> this.editMovie(movie.movieId)}/>}
-                primaryText={movie.title}
+                primaryText={movie.title===""? "No title" : movie.title}
                 key={movie.movieId}
-                secondaryText={movie.releaseDate}
+                secondaryText={movie.releaseDate===null? " " : movie.releaseDate}
                 disabled={movie.pending}
-                style={{color: movie.pending===true? grey400 : black}}
-                
+                style={{color: movie.pending===true? grey400 : black}}  
               />)
           }
         </List>
@@ -88,22 +90,11 @@ class MovieList extends React.Component {
           />
         </List>
         <EditDialog> </EditDialog>
-      </Paper>
+      </div>
     )
   }
 }
 
-const list_container = {
-
-  marginRight: 24,
-  marginLeft: 200,
-  maxWidth: 700,
-  maxHeight: 350,
-  border: 'solid 1px #d9d9d9',
-  borderBottom: 'none',
-  overflow: 'scroll',
-
-};
 
 
 export default MovieList;

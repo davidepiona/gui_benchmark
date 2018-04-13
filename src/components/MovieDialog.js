@@ -1,10 +1,14 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
 import DatePicker from 'material-ui/DatePicker';
+import TextField from 'material-ui/TextField';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 
-import {postMovie, uploadMovie} from '../Api'
+import FlatButton from 'material-ui/FlatButton';
+
+import {postMovie, uploadMovie, getMovies} from '../Api'
+import {blue500, white, red400 } from 'material-ui/styles/colors';
 import VideoPlayer from '../container/VideoPlayer';
 
 /**
@@ -73,30 +77,25 @@ export default class MovieDialog extends React.Component {
           .then(
             movie=> {
                 this.props.onUploadMovieSuccess(data)
+                this.refresh()
             },
             err => this.props.onUploadMovieFailure()
         )
+    
   }
 
-  render() {
-    const actions = [
-      <FloatingActionButton
-        label="Submit"
-        disabled={false}
-        onClick={(e) => this.closeDialog()}>
-        <ContentAdd />
-      </FloatingActionButton>,
-    ];
+  refresh() {
+    this.props.onGetMoviesRequest();
+      getMovies()
+        .then(
+          movie => {
+            this.props.onGetMoviesSuccess(movie)
+          },
+          error => this.props.onGetMoviesFailure(error)
+        )
+  }
 
-    const actions2 = [
-      <FloatingActionButton
-        label="Upload"
-        disabled={false}
-        onClick={(e) => this.upload()}>
-        <ContentAdd />
-      </FloatingActionButton>,
-    ];
-    
+  render() {    
     return (
       <div>
         <FloatingActionButton 
@@ -105,23 +104,60 @@ export default class MovieDialog extends React.Component {
           onClick={(e) => this.openDialog()}
           >
             <ContentAdd />
-          </FloatingActionButton>
+        </FloatingActionButton>
+
         <Dialog
           title="Movie-Post"
-          actions={actions}
+          actions={
+            [<FlatButton
+            label="Cancel"
+            disabled={false}
+            onClick={(e) => this.closePost()}
+            backgroundColor= {red400}
+            style={{color: white}}> 
+            </FlatButton>,
+            <FlatButton
+            label="Submit"
+            disabled={false}
+            onClick={(e) => this.closeDialog()}
+            backgroundColor= {blue500}
+            style={{color: white, marginLeft: 5}}> 
+            </FlatButton>]
+          }
           open={this.state.open}
           onRequestClose={(e)=>this.closePost()}
+          titleStyle={{paddingTop: 18, paddingBottom: 0}}
+          bodyStyle={{overflowY: 'auto'}}
+          actionsContainerStyle={{paddingTop: 0, paddingBottom: 5}}
         >
-          <input placeholder="Title" value={this.state.title} onChange={ (e) => this.inputValueChanged("title",e) } />
-          <input placeholder="Director" value={this.state.director} onChange={ (e) => this.inputValueChanged("director",e) } />
-          <input placeholder="Language" value={this.state.language} onChange={ (e) => this.inputValueChanged("language", e) } />
-          <input placeholder="Duration" value={this.state.duration} onChange={ (e) => this.inputValueChanged("duration", e) } />       
-          <DatePicker floatingLabelText="Release Date" openToYearSelection={true} onChange={(x, event) =>this.dateChange(event)}/>
-          
+          <TextField style={{height:66}} floatingLabelText="Title" value={this.state.title} onChange={ (e) => this.inputValueChanged("title",e) }/> 
+          <br/>
+          <TextField style={{height:66}} floatingLabelText="Director" value={this.state.director} onChange={ (e) => this.inputValueChanged("director",e) }/>
+          <br/>
+          <TextField style={{height:66}} floatingLabelText="Language" value={this.state.language} onChange={ (e) => this.inputValueChanged("language",e) }/> 
+          <br/>                 
+          <DatePicker style={{height:66}} floatingLabelText="Release date" id="datePicker" openToYearSelection={true} onChange={(x, event) =>this.dateChange(event)}/>
         </Dialog>
+        
+
         <Dialog
           title="Movie-Upload"
-          actions={actions2}
+          actions={
+            [<FlatButton
+            label="Cancel"
+            disabled={false}
+            onClick={(e) => this.closeUpload()}
+            backgroundColor= {red400}
+            style={{color: white}}> 
+            </FlatButton>,
+            <FlatButton
+            label="Upload"
+            disabled={false}
+            onClick={(e) => this.upload()}
+            backgroundColor= {blue500}
+            style={{color: white, marginLeft: 5}}> 
+            </FlatButton>]
+          }
           open={this.props.openUpload}
           onRequestClose={(e)=>this.closeUpload()}
         >
@@ -130,8 +166,9 @@ export default class MovieDialog extends React.Component {
               type="file" 
               id = "inputFile"
               onChange = {(e) => this.chooseMovie(e)} />
-        </Dialog>   
-          <VideoPlayer> </VideoPlayer>
+        </Dialog> 
+
+        <VideoPlayer> </VideoPlayer>
       </div>
     );
   }
@@ -139,10 +176,11 @@ export default class MovieDialog extends React.Component {
 
 
 const style = {
-  marginLeft: 200,
-  marginRight: 24,
-
-};
+  borderWidth:1,
+  position:'fixed',
+  bottom:'5%',
+  left:'85%', 
+  alignSelf:'flex-end'};
 
 const movieInfo = {
   "id":"",

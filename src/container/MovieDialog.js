@@ -23,7 +23,11 @@ const mapDispatchToProps = (dispatch) => {
         onUploadMovieFailure: (error) => dispatch(ActionTypes.uploadMovieFailure(error)),
 
         onOpenUpload: (movieId) => dispatch(ActionTypes.openUpload(movieId)),
-        onCloseUpload: () => dispatch(ActionTypes.closeUpload())
+        onCloseUpload: () => dispatch(ActionTypes.closeUpload()),
+
+        onGetMoviesRequest: () => dispatch(ActionTypes.getMoviesRequest()),
+        onGetMoviesSuccess: (data) => dispatch(ActionTypes.getMoviesSuccess(data)),
+        onGetMoviesFailure: (error) => dispatch(ActionTypes.getMoviesFailure(error)),
     };
 }
 

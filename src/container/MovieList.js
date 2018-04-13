@@ -5,7 +5,8 @@ import * as ActionTypes from '../actions'
 const mapStateToProps = (state) => {
     return {
         movies: state.movies.list,
-        editId: state.movies.editId
+        editId: state.movies.editId,
+        search: state.search.search
     }
 }
 
@@ -15,7 +16,7 @@ const mapDispatchToProps = (dispatch) => {
         onGetMoviesSuccess: (data) => dispatch(ActionTypes.getMoviesSuccess(data)),
         onGetMoviesFailure: (error) => dispatch(ActionTypes.getMoviesFailure(error)),
         
-        onStreamMovieRequest: (streamId) => dispatch(ActionTypes.streamMovieRequest(streamId)),
+        onStreamMovieRequest: (streamMovie) => dispatch(ActionTypes.streamMovieRequest(streamMovie)),
         
         onEditMovieRequest: (editId, data) => dispatch(ActionTypes.editMovieRequest(editId, data)),
         onEditMovieEnd: () => dispatch(ActionTypes.editMovieEnd()),

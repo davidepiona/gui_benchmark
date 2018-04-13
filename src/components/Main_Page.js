@@ -1,7 +1,7 @@
 import React from 'react'
-import RaisedButton from 'material-ui/RaisedButton'
 import MovieList from '../container/MovieList'
 import MovieDialog from '../container/MovieDialog'
+import AppBarIcon from '../container/AppBarIcon';
 class Main_Page extends React.Component {
     componentWillMount() {
     }
@@ -11,9 +11,7 @@ class Main_Page extends React.Component {
         
         return (
             <div>
-                <div id="header">
-                    <RaisedButton label="Default" > </RaisedButton>
-                </div>
+                <AppBarIcon> </AppBarIcon>
                 <MovieList > </MovieList> 
                 <MovieDialog> </MovieDialog>
             </div>

@@ -4,7 +4,7 @@ const defaultState = {
     isFetching: false,
     list: [],
     error: null,
-    streamId: "",
+    streamMovie: "",
     openStream: false,
     openEdit: false,
     openUpload: false,
@@ -77,13 +77,13 @@ export default function movies(state = defaultState, action) {
         case ActionTypes.STREAM_MOVIE_REQUEST:
             return {
                 ...state,
-                streamId: action.streamId,
+                streamMovie: action.streamMovie,
                 openStream: true
             }  
         case ActionTypes.CLOSE_STREAM:
             return {
                 ...state,
-                streamId: "",
+                streamMovie: "",
                 openStream: false
             } 
         case ActionTypes.EDIT_MOVIE_REQUEST:

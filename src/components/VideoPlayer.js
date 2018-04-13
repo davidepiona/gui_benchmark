@@ -16,21 +16,21 @@ class VideoPlayer extends React.Component {
   }
 
   render() {
-    const {streamId} = this.props
+    const {streamMovie} = this.props
     const {openStream} = this.props
 
     return (
         <Dialog
           open= {openStream===undefined? false : openStream}
-          contentStyle={{width: 320, height: 180}}
+          contentStyle={{width: streamMovie.width, height: streamMovie.height, maxWidth: 1920, maxHeight: 1080}}
           bodyStyle={{padding: 0}}
           onRequestClose={(e) => this.closeRequest()}
           >
         <video className="video-js"
             controls= {true} preload="auto"
-            style={{backgroundColor: darkBlack,  width: 320, height: 180}}
+            style={{backgroundColor: darkBlack,  width: streamMovie.width, height: streamMovie.height, maxWidth: 1920, maxHeight: 1080}}
             autoPlay>
-            <source src={`http://localhost:8888/stream/${streamId}.mp4`} type="video/mp4" />
+            <source src={`http://localhost:8888/stream/${streamMovie.movieId}.mp4`} type="video/mp4" />
           </video>
         </Dialog> 
     )
