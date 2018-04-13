@@ -5,7 +5,9 @@ import * as ActionTypes from '../actions'
 
 const mapStateToProps = (state) => {
     return {
-        
+        openStream: state.movies.openStream,
+        openUpload: state.movies.openUpload,
+        uploadId: state.movies.uploadId
     }
   }
 
@@ -18,7 +20,10 @@ const mapDispatchToProps = (dispatch) => {
 
         onUploadMovieRequest: () => dispatch(ActionTypes.uploadMovieRequest()),
         onUploadMovieSuccess: (data) => dispatch(ActionTypes.uploadMovieSuccess(data)),
-        onUploadMovieFailure: (error) => dispatch(ActionTypes.uploadMovieFailure(error))
+        onUploadMovieFailure: (error) => dispatch(ActionTypes.uploadMovieFailure(error)),
+
+        onOpenUpload: (movieId) => dispatch(ActionTypes.openUpload(movieId)),
+        onCloseUpload: () => dispatch(ActionTypes.closeUpload())
     };
 }
 

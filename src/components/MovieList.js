@@ -1,6 +1,7 @@
 import React from 'react';
-import { List, ListItem } from 'material-ui/List';
 import _ from 'lodash'
+import { getMovies, getSingleMovie } from '../Api'
+import EditDialog from '../container/EditDialog'
 
 
 import ActionInfo from 'material-ui/svg-icons/action/info';
@@ -10,9 +11,8 @@ import Avatar from 'material-ui/Avatar';
 import FileFolder from 'material-ui/svg-icons/file/folder';
 import Movie from 'material-ui/svg-icons/av/movie';
 import { blue500, grey400} from 'material-ui/styles/colors';
-import EditorInsertChart from 'material-ui/svg-icons/editor/insert-chart';
 import Paper from 'material-ui/Paper';
-import { getMovies } from '../Api'
+import { List, ListItem } from 'material-ui/List';
 import { black } from 'material-ui/styles/colors';
 
 
@@ -29,9 +29,20 @@ class MovieList extends React.Component {
       )
   }
 
-  // handleClick(){
-  //   console.log(this.props.open)
-  // }
+  streamMovie(streamId) {
+    console.log(streamId)
+    this.props.onStreamMovieRequest(streamId);
+
+  }
+  
+  editMovie(movieId) {
+    getSingleMovie(movieId)
+      .then(movie => this.props.onEditMovieRequest(movieId, movie));
+  }
+
+  uploadMovie(movieId) {
+    this.props.onOpenUpload(movieId)
+  }
 
   render() {
     const { movies } = this.props
@@ -44,13 +55,20 @@ class MovieList extends React.Component {
           {
             _.map(movies, (movie) =>
               <ListItem
-                leftAvatar={<Avatar icon={<Movie />} backgroundColor={movie.pending===true? grey400 : blue500} />}
-                rightIcon={<ActionInfo />}
+                leftAvatar={
+                    <Avatar 
+                      icon={<Movie />} 
+                      backgroundColor={movie.pending===true? grey400 : blue500} 
+                      onClick= {movie.pending===true? (e) => this.uploadMovie(movie.movieId) : (e) => this.streamMovie(movie.movieId)}/>}
+                rightIcon={
+                    <ActionInfo
+                      onClick={(e)=> this.editMovie(movie.movieId)}/>}
                 primaryText={movie.title}
                 key={movie.movieId}
                 secondaryText={movie.releaseDate}
                 disabled={movie.pending}
                 style={{color: movie.pending===true? grey400 : black}}
+                
               />)
           }
         </List>
@@ -69,6 +87,7 @@ class MovieList extends React.Component {
             
           />
         </List>
+        <EditDialog> </EditDialog>
       </Paper>
     )
   }
@@ -86,13 +105,5 @@ const list_container = {
 
 };
 
-const list_item = {
-  border: '5px',
-  fontSize: 10,
-  lineHeight: '10px',
-  maxHeight: 50,
-  // boxSizing: 
-
-};
 
 export default MovieList;

@@ -74,3 +74,66 @@ export const postMovieFailure = (error) => {
     };
 }
 
+// ----------------------------------------------------------------------------
+
+export const STREAM_MOVIE_REQUEST = 'STREAM_MOVIE_REQUEST'
+export const CLOSE_STREAM = 'CLOSE_STREAM'
+
+export const streamMovieRequest = (streamId) => {
+    return {
+        type: STREAM_MOVIE_REQUEST,
+        streamId
+    };
+}
+
+export const closeStream = () => {
+    return {
+        type: CLOSE_STREAM,
+        
+    };
+}
+
+// ----------------------------------------------------------------------------
+
+export const EDIT_MOVIE_REQUEST = 'EDIT_MOVIE_REQUEST'
+export const EDIT_MOVIE_END = 'EDIT_MOVIE_END'
+export const EDIT_MOVIE_FAILURE = 'EDIT_MOVIE_FAILURE'
+
+export const editMovieRequest = (editId, data) => {
+    return {
+        type: EDIT_MOVIE_REQUEST,
+        editId,
+        data
+    };
+}
+
+export const editMovieEnd = () => {
+    return {
+        type: EDIT_MOVIE_END,
+    };
+}
+
+export const editMovieFailure = (error) => {
+    return {
+        type: EDIT_MOVIE_FAILURE,
+        error
+    };
+}
+
+// ----------------------------------------------------------------------------
+
+export const OPEN_UPLOAD = 'OPEN_UPLOAD'
+export const CLOSE_UPLOAD = 'CLOSE_UPLOAD'
+
+export const openUpload = (movieId) => {
+    return {
+        type: OPEN_UPLOAD,
+        movieId
+    };
+}
+
+export const closeUpload = () => {
+    return {
+        type: CLOSE_UPLOAD
+    };
+}

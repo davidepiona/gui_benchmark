@@ -1,11 +1,11 @@
 import React from 'react';
 import Dialog from 'material-ui/Dialog';
-import FlatButton from 'material-ui/FlatButton';
 import DatePicker from 'material-ui/DatePicker';
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 
 import {postMovie, uploadMovie} from '../Api'
+import VideoPlayer from '../container/VideoPlayer';
 
 /**
  * A modal dialog can only be closed by selecting one of the actions.
@@ -13,7 +13,7 @@ import {postMovie, uploadMovie} from '../Api'
 export default class MovieDialog extends React.Component {
 
   componentWillMount() {
-    this.setState({id:"", title:"", director:"", releaseDate:"", language:"", duration:"", open:false, open2:false, movie: null, currentId: ""});
+    this.setState({id:"", title:"", director:"", releaseDate:"", language:"", duration:"", open:false, movie: null});
   }
 
   openDialog= ()=> {
@@ -45,32 +45,37 @@ export default class MovieDialog extends React.Component {
         .then(
             data => {
                 this.props.onPostMovieSuccess(data)
-                this.setState({currentId: data.movieId})
+                this.setState({open: false})
+                this.props.onOpenUpload(data.movieId)
             },
             error => this.props.onPostMovieFailure(error)
         )
-    this.setState({open: false})
-    this.setState({open2: true})
   }
 
   chooseMovie(e) {
-    console.log(e.target.files[0])
     this.setState({movie: e.target.files[0]})         
+  }
+
+  closePost() {
+    this.setState({open: false})
+  }
+
+  closeUpload() {
+    this.props.onCloseUpload()
   }
   
   upload() {
     var data = new FormData()
     data.append('file', this.state.movie)  
     this.props.onUploadMovieRequest()
-    console.log(this.state.currentId)  
-    uploadMovie(this.state.currentId, data)
+    console.log(this.props.uploadId)  
+    uploadMovie(this.props.uploadId, data)
           .then(
             movie=> {
                 this.props.onUploadMovieSuccess(data)
             },
             err => this.props.onUploadMovieFailure()
         )
-    this.setState({open2:false})
   }
 
   render() {
@@ -91,7 +96,7 @@ export default class MovieDialog extends React.Component {
         <ContentAdd />
       </FloatingActionButton>,
     ];
-
+    
     return (
       <div>
         <FloatingActionButton 
@@ -104,8 +109,8 @@ export default class MovieDialog extends React.Component {
         <Dialog
           title="Movie-Post"
           actions={actions}
-          modal={true}
           open={this.state.open}
+          onRequestClose={(e)=>this.closePost()}
         >
           <input placeholder="Title" value={this.state.title} onChange={ (e) => this.inputValueChanged("title",e) } />
           <input placeholder="Director" value={this.state.director} onChange={ (e) => this.inputValueChanged("director",e) } />
@@ -117,15 +122,16 @@ export default class MovieDialog extends React.Component {
         <Dialog
           title="Movie-Upload"
           actions={actions2}
-          modal={true}
-          open={this.state.open2}
+          open={this.props.openUpload}
+          onRequestClose={(e)=>this.closeUpload()}
         >
-          The info about the movie have been saved, if you want you can associate a movie to them
+          The info about the movie has been saved, if you want you can associate a movie to them
           <input 
               type="file" 
               id = "inputFile"
               onChange = {(e) => this.chooseMovie(e)} />
-        </Dialog>
+        </Dialog>   
+          <VideoPlayer> </VideoPlayer>
       </div>
     );
   }
