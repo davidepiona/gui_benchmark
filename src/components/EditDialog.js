@@ -5,7 +5,8 @@ import DatePicker from 'material-ui/DatePicker';
 import TextField from 'material-ui/TextField';
 import { blue500, white, red400 } from 'material-ui/styles/colors';
 
-import {editMovie, getMovies} from '../Api'
+import {editMovie, getMovies, deleteMovie} from '../Api'
+import { grey500 } from 'material-ui/styles/colors';
 
 
 
@@ -16,7 +17,7 @@ export default class EditDialog extends React.Component {
 
   componentWillMount() {
     const date = new Date();
-    this.setState({title:"", director:"", releaseDate:date, language:"", duration:"", open:false});
+    this.setState({title:"", director:"", releaseDate:date, language:"", duration:"", open:false, openDelete: false});
   }
 
   inputValueChanged (value, e) {
@@ -30,12 +31,21 @@ export default class EditDialog extends React.Component {
     });
   }
 
+  openDelete(){
+    this.setState({openDelete: true})
+    this.props.onEditMovieEnd();
+  }
+
   closeRequestEdit() {
     this.props.onEditMovieEnd();
   }
 
   closeRequestSubmit() {
     this.setState({open: false});
+  }
+
+  closeDelete() {
+    this.setState({openDelete:false})
   }
 
   closeDialog=() =>{
@@ -47,7 +57,7 @@ export default class EditDialog extends React.Component {
     movieInfo.duration=this.state.duration
     movieInfo.pending=this.props.editMovie.pending
     // console.log(movieInfo)
-    editMovie(movieInfo)
+    editMovie(movieInfo.id, movieInfo)
         .then(
             data => {
                 this.props.onEditMovieEnd()
@@ -69,6 +79,15 @@ export default class EditDialog extends React.Component {
         )
   }
 
+  onDeleteMovie(id) {
+    deleteMovie(id)
+      .then(
+        e => {
+          this.refresh()
+        }
+      )
+    this.closeDelete()
+  }
   updateState() {
     const {editMovie} = this.props
     this.setState({title:editMovie.title, director:editMovie.director, 
@@ -82,7 +101,7 @@ export default class EditDialog extends React.Component {
     return (
       <div>
         <Dialog
-          title="Do you want to edit the movie?"
+          title="Do you want to edit or delete the movie?"
           open={openEdit} 
           onRequestClose={(e) => this.closeRequestEdit()}
           actions= {
@@ -90,6 +109,13 @@ export default class EditDialog extends React.Component {
             label="Cancel"
             disabled={false}
             onClick={(e) => this.closeRequestEdit()}
+            backgroundColor= {grey500}
+            style={{color: white}}> 
+            </FlatButton>,
+            <FlatButton
+            label="Delete"
+            disabled={false}
+            onClick={(e) => this.openDelete()}
             backgroundColor= {red400}
             style={{color: white}}> 
             </FlatButton>,
@@ -136,9 +162,35 @@ export default class EditDialog extends React.Component {
           <br/>
           <TextField style={{height:66}} floatingLabelText="Language" value={this.state.language} onChange={ (e) => this.inputValueChanged("language",e) }/> 
           <br/>                 
-          <DatePicker style={{height:66}} floatingLabelText="Release date" id="datePicker" defaultDate={new Date(this.state.releaseDate)} openToYearSelection={true} onChange={(x, event) =>this.dateChange(event)}/>
-          
+          <DatePicker style={{height:66}} floatingLabelText="Release date" id="datePicker" openToYearSelection={true} onChange={(x, event) =>this.dateChange(event)}/>  
         </Dialog>
+
+        <Dialog
+          title="Are you sure to delete permanently the movie?"
+          open={this.state.openDelete} 
+          onRequestClose={(e) => this.closeDelete()}
+          actions= {
+            [<FlatButton
+            label="Cancel"
+            disabled={false}
+            onClick={(e) => this.closeDelete()}
+            backgroundColor= {grey500}
+            style={{color: white}}> 
+            </FlatButton>,
+            <FlatButton
+            label="Delete"
+            disabled={false}
+            onClick={(e) => this.onDeleteMovie(editMovie.movieId)}
+            backgroundColor= {red400}
+            style={{color: white}}> 
+            </FlatButton>,
+            ]  
+          }>
+          Title: {editMovie.title} <br/>
+          Director: {editMovie.director} <br/>
+          Language: {editMovie.language} <br/>
+        </Dialog>
+        
       </div>
     );
   }

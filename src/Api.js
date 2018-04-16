@@ -21,11 +21,16 @@ export const postMovie = (movie) => fetch(`http://localhost:8010/api/movies`, {
 }).then(res => res.status!==409? res.json(): Promise.reject("Yet extisting movie"))
 .catch(error => console.error('Error:', error));
 
-export const editMovie = (movie) => fetch(`http://localhost:8010/api/movies/edit`, {
-  method: 'POST',
+export const editMovie = (id, movie) => fetch(`http://localhost:8010/api/movies/${id}`, {
+  method: 'PUT',
   body: JSON.stringify(movie), 
   headers: new Headers({
     'Content-Type': 'application/json'
   })
 }).then(res => res.status!==409? res : Promise.reject("Not extisting movie"))
+.catch(error => console.error('Error:', error));
+
+export const deleteMovie = (id) => fetch(`http://localhost:8010/api/movies/${id}`, {
+  method:'DELETE',
+})
 .catch(error => console.error('Error:', error));

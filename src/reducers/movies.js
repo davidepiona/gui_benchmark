@@ -100,7 +100,6 @@ export default function movies(state = defaultState, action) {
                 editId: "",
                 openEdit: false,
                 isFetching: false,
-                editMovie: ""
             }
         case ActionTypes.EDIT_MOVIE_FAILURE:
             return {
@@ -108,7 +107,6 @@ export default function movies(state = defaultState, action) {
                 editId: "",
                 openEdit: false,
                 isFetching: false,
-                editMovie: "",
                 error: action.error
             }
         case ActionTypes.OPEN_UPLOAD:
