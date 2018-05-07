@@ -30,7 +30,7 @@ class VideoPlayer extends React.Component {
             controls= {true} preload="auto"
             style={{backgroundColor: darkBlack,  width: streamMovie.width, height: streamMovie.height, maxWidth: 1920, maxHeight: 1080}}
             autoPlay>
-            <source src={`http://localhost:8888/stream/${streamMovie.movieId}.mp4`} type="video/mp4" />
+            <source src={`/stream/${streamMovie.movieId}.mp4`} type="video/mp4" />
           </video>
         </Dialog> 
     )
