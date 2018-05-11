@@ -8,6 +8,7 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import FlatButton from 'material-ui/FlatButton';
 
 import {postMovie, uploadMovie, getMovies} from '../Api'
+import {subscribeWS, uploadWSMovie} from '../WSUpload'
 import {blue500, white, red400 } from 'material-ui/styles/colors';
 import VideoPlayer from '../container/VideoPlayer';
 
@@ -69,20 +70,44 @@ export default class MovieDialog extends React.Component {
   }
   
   upload() {
-    var data = new FormData()
-    data.append('file', this.state.movie)  
-    this.props.onUploadMovieRequest()
-    console.log(this.props.uploadId)  
-    uploadMovie(this.props.uploadId, data)
-          .then(
-            movie=> {
-                this.props.onUploadMovieSuccess(data)
-                this.refresh()
-            },
-            err => this.props.onUploadMovieFailure()
-        )
-    
-  }
+    // Multipart upload using REST
+    if(false) {
+      var data = new FormData()
+      data.append('file', this.state.movie)  
+      this.props.onUploadMovieRequest()
+      console.log(this.props.uploadId)  
+      uploadMovie(this.props.uploadId, data)
+            .then(
+              movie=> {
+                  this.props.onUploadMovieSuccess()
+                  this.refresh()
+              },
+              err => this.props.onUploadMovieFailure()
+          )
+      }
+      // Upload using WebSocket
+    if(true) {
+      var reader = new FileReader();
+      var partId =0;
+      var partCount =0;
+      reader.readAsDataURL(this.state.movie);
+      const {uploadId} = this.props;
+      this.props.onUploadMovieRequest()
+      var subscribe = subscribeWS();
+      reader.onload = function () {
+        var data = reader.result.slice(reader.result.match("base64").index+7)
+        var length = data.length;
+        var partCount = Math.floor(length/60000);
+        for (var i = 0; i <= partCount; i++) {
+          var part = data.substring(i*60000,(i+1)*60000); 
+          uploadWSMovie(uploadId, part, i, partCount)
+         }
+        }
+        this.props.onUploadMovieSuccess()
+        this.refresh()
+        //subscribe.unsubscribe();
+      }
+  };  
 
   refresh() {
     this.props.onGetMoviesRequest();

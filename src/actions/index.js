@@ -34,10 +34,9 @@ export const uploadMovieRequest = () => {
     };
 }
 
-export const uploadMovieSuccess = (data) => {
+export const uploadMovieSuccess = () => {
     return {
         type: UPLOAD_MOVIE_SUCCESS,
-        data
     };
 }
 
