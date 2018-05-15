@@ -93,21 +93,20 @@ export default class MovieDialog extends React.Component {
       reader.readAsDataURL(this.state.movie);
       const {uploadId} = this.props;
       this.props.onUploadMovieRequest()
-      var subscribe = subscribeWS();
+      var subscribe = subscribeWS(this.refresh.bind(this));
       reader.onload = function () {
         var data = reader.result.slice(reader.result.match("base64").index+7)
         var length = data.length;
-        var partCount = Math.floor(length/60000);
+        var partCount = Math.floor(length/8192);
         for (var i = 0; i <= partCount; i++) {
-          var part = data.substring(i*60000,(i+1)*60000); 
+          var part = data.substring(i*8192,(i+1)*8192); 
           uploadWSMovie(uploadId, part, i, partCount)
          }
         }
         this.props.onUploadMovieSuccess()
-        this.refresh()
         //subscribe.unsubscribe();
       }
-  };  
+  }; 
 
   refresh() {
     this.props.onGetMoviesRequest();

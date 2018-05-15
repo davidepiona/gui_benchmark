@@ -1,10 +1,15 @@
 import configureWebSocket from './WSConnect';
 
-export const subscribeWS = () => {
-  return stomp.subscribe("/app/upload", function(message) {
+export const subscribeWS = (refresh) => {
+  var subscribe = stomp.subscribe("/topic/upload", function(message) {
         var quote = JSON.parse(message.body);
-        console.log(quote.symbol + " is at " + quote.value+ "TTTTTTTTTTT");
+        if(quote){
+                console.log("The upload is finished")
+                subscribe.unsubscribe();
+                refresh();
+        }
       })
+      return subscribe;
 }
 
 
@@ -12,24 +17,6 @@ export const uploadWSMovie = (id, movie, partId, partCount) => {
   stomp.send("/app/upload", {}, JSON.stringify({id: id, fileContent: movie, partCount: partCount, partId: partId }));
 }
 
-// onmessage = function(e) {
-
-//         try{
-//             data = JSON.parse(e.data);
-//         }catch(er){
-//             console.log('socket parse error: '+e.data);
-//         }
-    
-//         if (typeof(data['cmd_id']) != 'undefined' && typeof(socketQueue['i_'+data['cmd_id']]) == 'function'){
-//             execFunc = socketQueue['i_'+data['cmd_id']];
-//             execFunc(data['result']);
-//             delete socketQueue['i_'+data['cmd_id']]; // to free up memory.. and it is IMPORTANT thanks  Le Droid for the reminder
-//             return;
-//         }else{
-//             socketRecieveData(e.data);
-//         }
-//         }
-// }
 
 let stomp;
 configureWebSocket({
@@ -40,7 +27,7 @@ configureWebSocket({
         onDisconnectedCallback: () => {
                 stomp = null;
         },
-        logOnConsole: true,
+        logOnConsole: false,
         timeout: 5000
 })
 
