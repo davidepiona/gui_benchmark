@@ -9,11 +9,11 @@ import FlatButton from 'material-ui/FlatButton';
 
 import {postMovie, uploadMovie, getMovies} from '../Api'
 import {subscribeWS, uploadWSMovie} from '../WSUpload'
-import {blue500, white, red400 } from 'material-ui/styles/colors';
+import {blue500, white, red400, blue700 } from 'material-ui/styles/colors';
 import VideoPlayer from '../container/VideoPlayer';
 
 /**
- * A modal dialog can only be closed by selecting one of the actions.
+ * A Dialog that appears when the user tries to open the 
  */
 export default class MovieDialog extends React.Component {
 
@@ -68,10 +68,10 @@ export default class MovieDialog extends React.Component {
   closeUpload() {
     this.props.onCloseUpload()
   }
-  
-  upload() {
-    // Multipart upload using REST
-    if(false) {
+
+  // Multipart upload using REST
+  uploadMultipart() {
+    
       var data = new FormData()
       data.append('file', this.state.movie)  
       this.props.onUploadMovieRequest()
@@ -84,28 +84,26 @@ export default class MovieDialog extends React.Component {
               },
               err => this.props.onUploadMovieFailure()
           )
-      }
-      // Upload using WebSocket
-    if(true) {
+    };
+
+  // Upload using WebSocket
+  uploadWS() {
       var reader = new FileReader();
-      var partId =0;
-      var partCount =0;
       reader.readAsDataURL(this.state.movie);
       const {uploadId} = this.props;
       this.props.onUploadMovieRequest()
-      var subscribe = subscribeWS(this.refresh.bind(this));
+      subscribeWS(this.refresh.bind(this));
       reader.onload = function () {
         var data = reader.result.slice(reader.result.match("base64").index+7)
         var length = data.length;
         var partCount = Math.floor(length/8192);
         for (var i = 0; i <= partCount; i++) {
           var part = data.substring(i*8192,(i+1)*8192); 
-          uploadWSMovie(uploadId, part, i, partCount)
+          uploadWSMovie(uploadId, part, i, partCount);
+          // console.log("Siamo al pezzo : "+ i + " di: "+  partCount);
          }
         }
         this.props.onUploadMovieSuccess()
-        //subscribe.unsubscribe();
-      }
   }; 
 
   refresh() {
@@ -135,17 +133,14 @@ export default class MovieDialog extends React.Component {
           actions={
             [<FlatButton
             label="Cancel"
-            disabled={false}
             onClick={(e) => this.closePost()}
-            backgroundColor= {red400}
-            style={{color: white}}> 
+            style={{color: white, marginLeft: 5, backgroundColor: red400, disabled: false}}> 
             </FlatButton>,
             <FlatButton
             label="Submit"
             disabled={false}
             onClick={(e) => this.closeDialog()}
-            backgroundColor= {blue500}
-            style={{color: white, marginLeft: 5}}> 
+            style={{color: white, marginLeft: 5, backgroundColor: blue500}}> 
             </FlatButton>]
           }
           open={this.state.open}
@@ -169,17 +164,18 @@ export default class MovieDialog extends React.Component {
           actions={
             [<FlatButton
             label="Cancel"
-            disabled={false}
             onClick={(e) => this.closeUpload()}
-            backgroundColor= {red400}
-            style={{color: white}}> 
+            style={{color: white, backgroundColor: red400, disabled: false}}> 
             </FlatButton>,
             <FlatButton
-            label="Upload"
-            disabled={false}
-            onClick={(e) => this.upload()}
-            backgroundColor= {blue500}
-            style={{color: white, marginLeft: 5}}> 
+            label="UploadMultipart"
+            onClick={(e) => this.uploadMultipart()}
+            style={{color: white, marginLeft: 5, backgroundColor: blue500, disabled: false}}> 
+            </FlatButton>,
+            <FlatButton
+            label="UploadWS"
+            onClick={(e) => this.uploadWS()}
+            style={{color: white, marginLeft: 5, backgroundColor: blue700, disabled: false}}> 
             </FlatButton>]
           }
           open={this.props.openUpload}
